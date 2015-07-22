@@ -1,31 +1,53 @@
+//初始化包
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var mysql = require("mysql");
-
-var express = require("express");
+var jade = require('jade');
+var routes = require('./routes/index');
 
 var app = express();
 
-var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : '81527319',
-    database : 'node_test'
+//加载引擎模板
+app.set('view engine', 'jade');
+app.set('views', path.join(__dirname, 'views'));
+
+//调用工具
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+routes(app);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
-connection.connect(function(err){
-    if(!err) {
-        console.log("Database is connected ... \n\n");
-    } else {
-        console.log("Error connecting database ... \n\n");
-    }
-});
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
 
-app.get("/",function(req,res){
-    connection.query('SELECT * from user user', function(err, rows, fields) {
-        //connection.end();
-        if (!err)
-            console.log('The solution is: ', rows);
-        else
-            console.log('Error while performing Query.');
+// no stacktraces leaked to users
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
     });
 });
 
