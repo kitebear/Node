@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-ul,li{
+ul, li {
     list-style: none;
 }
 
@@ -44,12 +44,16 @@ ul,li{
     margin: 50px auto 0px;
 }
 
-button{
+button {
     height: 30px;
     width: 100px;
 }
 
-.nw1{
+.nw1 {
     width: 100px;
     display: inline-block;
+}
+
+.ele_none {
+    display: none;
 }
